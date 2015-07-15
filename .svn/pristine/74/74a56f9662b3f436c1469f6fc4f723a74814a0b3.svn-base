@@ -1,0 +1,74 @@
+Panel 1
+Pitch	1	8	True
+Roll	1	6	True
+Battery A	22	13	True
+Visible Sats	12	13	True
+GPS Lock	16	13	True
+GPS Coord	1	0	True
+Heading Rose	1	2	False
+Heading	1	7	True
+Home Direction	14	10	True
+Home Distance	0	12	True
+WP Distance	18	0	False
+Altitude	22	2	False
+Home Altitude	0	13	True
+Climb Rate	0	15	True
+Battery Percent	22	14	True
+Current	22	15	True
+Velocity	0	14	True
+Air Speed	24	3	False
+Throttle	12	15	True
+Flight Mode	12	14	True
+Horizon	8	5	True
+Wind Speed	14	2	False
+Warnings	9	4	True
+Time	22	12	True
+RSSI	12	12	True
+Efficiency	1	5	False
+Call Sign	21	1	False
+Temperature	1	10	False
+Trip Distance	22	3	False
+Panel 2
+Pitch	2	8	False
+Roll	2	6	False
+Battery A	22	14	True
+Visible Sats	12	14	True
+GPS Lock	16	14	True
+GPS Coord	1	0	True
+Heading Rose	17	14	False
+Heading	2	7	False
+Home Direction	14	11	True
+Home Distance	0	13	True
+WP Distance	18	11	False
+Altitude	22	4	False
+Home Altitude	0	14	True
+Climb Rate	2	15	False
+Battery Percent	22	15	True
+Current	23	15	False
+Velocity	0	15	True
+Air Speed	1	1	False
+Throttle	12	15	False
+Flight Mode	12	15	True
+Horizon	8	5	False
+Wind Speed	24	7	False
+Time	22	13	True
+RSSI	12	13	True
+Efficiency	1	3	False
+Call Sign	1	0	False
+Temperature	1	11	False
+Trip Distance	22	2	False
+Configuration
+Units	0
+Overspeed	80
+Stall	0
+Battery	105
+RSSI High	100
+RSSI Low	0
+RSSI Enable Raw	0
+Toggle Channel	6
+Chanel Rotation Switching	0
+Video Mode	1
+Battery Warning Level	10
+RSSI Warning Level	90
+OSD Brightness	0
+Call Sign	callsign
