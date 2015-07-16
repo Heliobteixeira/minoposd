@@ -31,7 +31,8 @@
 #ifndef ANALOG_RSSI_H_
 #define ANALOG_RSSI_H_
 
-#define RSSI_PIN			1			// A1 is pin 24
+//#define RSSI_PIN			1			// A1 is pin 24
+#define RSSI_PIN      3     // ADC3 is pin 26
 								// Any 'free' analog input will do -- A0-5 are available, 
 								// which are pins 23-28 on the ATmega328p
 

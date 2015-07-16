@@ -31,19 +31,23 @@
 #ifndef FLIGHT_BATT_H_
 #define FLIGHT_BATT_H_
 
-
-#define VOLTAGE_PIN			6
-#define CURRENT_PIN			7
+//#define VOLTAGE_PIN      6
+#define VOLTAGE_PIN			0
+//#define CURRENT_PIN      7
+#define CURRENT_PIN			1
 
 #define REF_VOLTAGE			1.1			// INTERNAL: a built-in reference, equal to 1.1 volts on the ATmega168 or ATmega328
-#define LOW_VOLTAGE			9.6			// filter start value for 3s LiPo
+//#define LOW_VOLTAGE			9.6			// filter start value for 3s LiPo
+#define LOW_VOLTAGE      96.4     // filter start value for 2s LiPo
 
-
-#define VOLT_DIV_RATIO			15.55			// Vref 1.1V based: This is the start value for calibrating a 16k0/1k1 voltage divider usable up to 4s LiPo
+//#define VOLT_DIV_RATIO      15.55     // Vref 1.1V based: This is the start value for calibrating a 16k0/1k1 voltage divider usable up to 4s LiPo
+#define VOLT_DIV_RATIO			15.89			// Vref 1.1V based: This is the start value for calibrating a 22k0/1k5 voltage divider usable up to 4s LiPo
 
 // !!! for the +-50A Current Sensor(AC/DC) DFRobot SEN0098 we need approx. a 1/4 voltage divider 3k0/1k1 so that we stay below 1.1 V -> 2*50A * 0.04V/A / (4.1/1.1) = 1.073 V !!!
-#define CURR_AMP_PER_VOLT		100.00			// Vref 1.1V based: This is the start value for calibrating a +-50A Current Sensor(AC/DC) DFRobot SEN0098 Sensitivity: 40 mV/A
-#define CURR_AMPS_OFFSET		0.5000			// Vref 1.1V based: This is the start value for calibrating a +-50A Current Sensor(AC/DC) DFRobot SEN0098 Sensitivity: 40 mV/A
+//#define CURR_AMP_PER_VOLT    100.00      // Vref 1.1V based: This is the start value for calibrating a +-50A Current Sensor(AC/DC) DFRobot SEN0098 Sensitivity: 40 mV/A
+#define CURR_AMP_PER_VOLT		28.74			// Vref 1.1V based: This is the start value for calibrating a +-50A Current Sensor(AC/DC) DFRobot SEN0098 Sensitivity: 40 mV/A
+//#define CURR_AMPS_OFFSET    0.5000      // Vref 1.1V based: This is the start value for calibrating a +-50A Current Sensor(AC/DC) DFRobot SEN0098 Sensitivity: 40 mV/A
+#define CURR_AMPS_OFFSET		0.0000			// Vref 1.1V based: This is the start value for calibrating a +-50A Current Sensor(AC/DC) DFRobot SEN0098 Sensitivity: 40 mV/A
 
 #define CURRENT_VOLTAGE(x)		((x)*REF_VOLTAGE/1024.0)*(volt_div_ratio/100.0)
 #define CURRENT_AMPS(x)			(((x)*REF_VOLTAGE/1024.0)-(curr_amp_offset/10000.0))*(curr_amp_per_volt/100.0)
