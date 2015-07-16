@@ -25,7 +25,7 @@
 //#define PACKETRXOK_ON_MINIMOSD
 
 // Amedee: Analog RSSI on MinimOSD:
-//#define ANALOG_RSSI_ON_MINIMOSD
+#define ANALOG_RSSI_ON_MINIMOSD
 
 // JRChange: artificial horizon original version
 //#define AH_ORIGINAL_VERSION

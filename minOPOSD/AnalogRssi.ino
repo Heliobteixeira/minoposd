@@ -40,7 +40,9 @@ void analog_rssi_init(void)
 void analog_rssi_read(void)
 {
 	if (rssiraw_on) {
-		osd_rssi = analogRead(RSSI_PIN) / 4;				// Just raw value, 0-255. We use this range to better align
+		//osd_rssi = analogRead(RSSI_PIN) / 4;				// Just raw value, 0-255. We use this range to better align
+		osd_rssi = (uint8_t)(float)((osd_chan7_raw - 950) * .3f); //In this example it has to be channel 6, not the PPM slot that EzUHF is using (11), but the number of the Function configured in the GCS input tab, not counting the disabled functions.
+   
 										// with the original code.
 	} else {
 #ifdef JR_SPECIALS
