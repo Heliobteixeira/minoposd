@@ -40,18 +40,62 @@ void analog_rssi_init(void)
 void analog_rssi_read(void)
 {
 	if (rssiraw_on) {
-		//osd_rssi = analogRead(RSSI_PIN) / 4;				// Just raw value, 0-255. We use this range to better align
-		osd_rssi = (uint8_t)(float)((osd_chan7_raw - 992) * .31135f); //In this example it has to be channel 6, not the PPM slot that EzUHF is using (11), but the number of the Function configured in the GCS input tab, not counting the disabled functions.
-   
-										// with the original code.
+		//osd_rssi = analogRead(RSSI_PIN) / 4;          // Just raw value, 0-255. We use this range to better align
+		//osd_rssi = (uint8_t)(float)((osd_chan7_raw - 992) * .31135f); 
+
+    // This only works for Frsky X8R Rx
+    // Currently this receiver has a RSSI port which outputs PWM signal of 1kHz whose duty cycle (%) is equivalent to RSSI (%)
+    uint16_t rssipulselength;
+    rssipulselength = (uint16_t)FastpulseIn(PWMRSSIPIN, HIGH,2048); //Returns the pulse length in microseconds
+    //rssipulselength = PulseIn(PWMRSSIPIN, HIGH,1024); //Returns the pulse length in microseconds -> Not very precise
+    
+    //For a frequency of 1kHz the cycle duration is 1000us (1ms). 
+    uint16_t dutycycle;
+    
+    dutycycle = (uint16_t)(float)(rssipulselength * .1f); // DutyCycle = PulseLength / CycleDuration * 100
+
+    if (dutycycle==0) {
+      osd_rssi=osd_rssi; //Keeps the last value
+    }
+    else if (dutycycle>254) {
+      osd_rssi=255;
+    } else {
+      osd_rssi = (uint8_t)(dutycycle);
+    }
+    
 	} else {
 #ifdef JR_SPECIALS
 // SEARCH GLITCH
 		osd_rssi = analogRead(RSSI_PIN)       / 4;			// 1:1 input
 #else
-		//osd_rssi = analogRead(RSSI_PIN) * .2  / 4 + osd_rssi * .8;	// Smooth input
-    osd_rssi = (uint8_t)(float)(((osd_chan7_raw - 992) * .31135f) * .2 + osd_rssi * .8);
+		osd_rssi = analogRead(RSSI_PIN) * .2  / 4 + osd_rssi * .8;	// Smooth input
+    //osd_rssi = (uint8_t)(float)(((osd_chan7_raw - 992) * .31135f) * .2 + osd_rssi * .8);
 #endif
 		osd_rssi = constrain(osd_rssi, rssipersent, rssical);		// Ensure we stay in range
 	}
+}
+
+uint16_t FastpulseIn(uint8_t pin, uint8_t state, unsigned long timeout)
+{
+  uint8_t bit = digitalPinToBitMask(pin);
+  uint8_t port = digitalPinToPort(pin);
+  uint8_t stateMask = (state ? bit : 0);
+  uint16_t width = 0;
+  unsigned long numloops = 0;
+  unsigned long maxloops = timeout;
+  
+  while ((*portInputRegister(port) & bit) == stateMask)
+    if (numloops++ == maxloops)
+      return 0;
+  
+  while ((*portInputRegister(port) & bit) != stateMask)
+    if (numloops++ == maxloops)
+      return 0;
+  
+  while ((*portInputRegister(port) & bit) == stateMask) {
+    if (numloops++ == maxloops)
+      return 0;
+    width++;
+  }
+  return width; 
 }

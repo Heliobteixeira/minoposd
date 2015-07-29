@@ -124,6 +124,7 @@ void setup()
 #endif
     pinMode(MAX7456_SELECT,  OUTPUT); // OSD CS
 
+    pinMode(PWMRSSIPIN, INPUT);
     Serial.begin(TELEMETRY_SPEED);
     // setup mavlink port
     mavlink_comm_0_port = &Serial;
