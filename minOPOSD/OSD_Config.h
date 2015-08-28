@@ -16,16 +16,19 @@
 #define PROTOCOL_UAVTALK
 
 // JRChange: Flight Batt on MinimOSD:
-#define FLIGHT_BATT_ON_MINIMOSD
+//#define FLIGHT_BATT_ON_MINIMOSD
 
 // JRChange: Flight Batt on Revo:
-//#define FLIGHT_BATT_ON_REVO
+#define FLIGHT_BATT_ON_REVO
 
 // JRChange: PacketRxOk on MinimOSD:
 //#define PACKETRXOK_ON_MINIMOSD
 
 // Amedee: Analog RSSI on MinimOSD:
-#define ANALOG_RSSI_ON_MINIMOSD
+//#define ANALOG_RSSI_ON_MINIMOSD
+
+// RSSI from Revo
+#define RSSI_ON_REVO
 
 // JRChange: artificial horizon original version
 //#define AH_ORIGINAL_VERSION
@@ -40,7 +43,7 @@
 #define AH_BETTER_RESOLUTION
 
 // JRChange: show_radar
-#define SHOW_RADAR
+//#define SHOW_RADAR
 
 // JRChange: JR specials
 //#define JR_SPECIALS
@@ -60,10 +63,11 @@
 //#define VERSION_RELEASE_14_06_1		// OpenPilot-RELEASE 14.06.1	'Peanuts Schnapps' .1
 //#define VERSION_RELEASE_14_10_1		// OpenPilot-RELEASE 14.10.1	'Mini Me' .1
 //#define VERSION_RELEASE_15_01_1		// OpenPilot-RELEASE 15.01.1	'Look, Ma... No Hands!' .1
-#define VERSION_RELEASE_15_02_1		// OpenPilot-RELEASE 15.02.1	'Ragin' Cajun' .1
+//#define VERSION_RELEASE_15_02_1		// OpenPilot-RELEASE 15.02.1	'not out yet' .1
+#define VERSION_RELEASE_15_05
 
 // Version string
-#define VERSION_STRING		osd.printf_P(PSTR("minoposd 15.02"));
+#define VERSION_STRING		osd.printf_P(PSTR("minoposd op-1904"));
 
 // OpenPilot additional UAVObjIds for unreleased and released versions
 #define VERSION_ADDITIONAL_UAVOBJID
@@ -286,3 +290,4 @@
 
 
 #define EEPROM_MAX_ADDR 1024 // this is 328 chip
+

@@ -138,6 +138,9 @@ void writeSettings() {
     writeEEPROM(on, panBatteryPercent_en_ADDR + offset);
     writeEEPROM(2,  panBatteryPercent_x_ADDR + offset);
     writeEEPROM(3,  panBatteryPercent_y_ADDR + offset); 
+    writeEEPROM(on, panTemp_en_ADDR + offset);
+    writeEEPROM(2,  panTemp_x_ADDR + offset);
+    writeEEPROM(3,  panTemp_y_ADDR + offset); 
     writeEEPROM(on, panTime_en_ADDR + offset);
     writeEEPROM(2,  panTime_x_ADDR + offset);
     writeEEPROM(3,  panTime_y_ADDR + offset);
@@ -353,6 +356,10 @@ void readPanelSettings() {
     setBit(panE_REG[panel], DIST_BIT, readEEPROM(panDistance_en_ADDR + offset));
     panDistance_XY[0][panel] = readEEPROM(panDistance_x_ADDR + offset);
     panDistance_XY[1][panel] = checkPAL(readEEPROM(panDistance_y_ADDR + offset));
+
+    setBit(panE_REG[panel], TEMP_BIT, readEEPROM(panTemp_en_ADDR + offset));
+    panTemp_XY[0][panel] = readEEPROM(panTemp_x_ADDR + offset);
+    panTemp_XY[1][panel] = checkPAL(readEEPROM(panTemp_y_ADDR + offset));
 }
 
 int checkPAL(int line){
@@ -387,3 +394,4 @@ void writeBattSettings() {
 	EEPROM.write(curr_amp_offset_ADDR,    (int)(CURR_AMPS_OFFSET*10000.0)&0xff);
 	EEPROM.write(curr_amp_offset_ADDR+1, ((int)(CURR_AMPS_OFFSET*10000.0)>>8)&0xff);
 }
+

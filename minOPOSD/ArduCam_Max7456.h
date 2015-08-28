@@ -9,6 +9,7 @@
 
 #define NTSC 0
 #define PAL 1
+#define FAT_SHARK
 #define MAX7456_MODE_MASK_PAL 0x40 //PAL mask 01000000
 #define MAX7456_CENTER_PAL 0x8
 
@@ -54,10 +55,18 @@
 #define MAX7456_SYNC_internal 0x30
 #define MAX7456_SYNC_external 0x20
 //VM1 command modifiers
+#ifdef FAT_SHARK
+//Fat Shark 250mw Tx white streaks fix
+#define MAX7456_WHITE_level_80 0x07 //Black level 10%
+#define MAX7456_WHITE_level_90 0x0A //Black level 20%
+#define MAX7456_WHITE_level_100 0x09 //Black level 20%
+#define MAX7456_WHITE_level_120 0x08 //Black level 20%
+#else /* FAT_SHARK */
 #define MAX7456_WHITE_level_80 0x03
 #define MAX7456_WHITE_level_90 0x02
 #define MAX7456_WHITE_level_100 0x01
 #define MAX7456_WHITE_level_120 0x00
+#endif /* FAT_SHARK */
 
 #define NVM_ram_size 0x36
 #define WRITE_nvr 0xa0
@@ -66,10 +75,10 @@
 //If PAL
 #ifdef isPAL
   #define MAX7456_screen_size 480 //16x30
-  #define MAX7456_screen_rows 15
+  #define MAX7456_screen_rows 0x10
 #else
   #define MAX7456_screen_size 390 //13x30
-  #define MAX7456_screen_rows 12
+  #define MAX7456_screen_rows 0x0D
 #endif
 
 //------------------ the OSD class -----------------------------------------------
@@ -102,4 +111,5 @@ class OSD: public BetterStream
 };
 
 #endif
+
 

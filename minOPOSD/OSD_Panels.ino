@@ -140,6 +140,7 @@ void writePanels() {
             if (ISa(panel,BatA_BIT))		panBatt_A(panBatt_A_XY[0][panel], panBatt_A_XY[1][panel]);
             if (ISc(panel,CurA_BIT))		panCur_A(panCur_A_XY[0][panel], panCur_A_XY[1][panel]);
             if (ISa(panel,Bp_BIT))		panBatteryPercent(panBatteryPercent_XY[0][panel], panBatteryPercent_XY[1][panel]);
+            if (ISe(panel,TEMP_BIT))		panTxPID(panTemp_XY[0][panel], panTemp_XY[1][panel]);
             if (ISb(panel,Time_BIT))		panTime(panTime_XY[0][panel], panTime_XY[1][panel]);
 	    
             if (ISc(panel,Hor_BIT))		panHorizon(panHorizon_XY[0][panel], panHorizon_XY[1][panel]);
@@ -334,7 +335,8 @@ void panWarn(int first_col, int first_line) {
                 case 5:						// RSSI LOW
                     if (rssi < rssi_warn_level && rssi != -99 && !rssiraw_on) {
 			warning_type = cycle;
-			warning_string = "  rssi low  ";
+			warning_string = "link quality";
+/*			warning_string = "  rssi low  "; */
 		    }
                     break;
 #ifdef JR_SPECIALS
@@ -810,6 +812,26 @@ void panFlightMode(int first_col, int first_line) {
     else if (osd_mode == 15) mode_str = "poi";	// POI
     else if (osd_mode == 16) mode_str = "ac ";	// AUTOCRUISE
 #endif    
+#if defined VERSION_RELEASE_15_05
+    if      (osd_mode ==  0) mode_str = "man";	// MANUAL
+    else if (osd_mode ==  1) mode_str = "st1";	// STABILIZED1
+    else if (osd_mode ==  2) mode_str = "st2";	// STABILIZED2
+    else if (osd_mode ==  3) mode_str = "st3";	// STABILIZED3
+    else if (osd_mode ==  4) mode_str = "st4";	// STABILIZED4
+    else if (osd_mode ==  5) mode_str = "st5";	// STABILIZED5
+    else if (osd_mode ==  6) mode_str = "st6";	// STABILIZED6
+    else if (osd_mode ==  7) mode_str = "ph ";	// POSITIONHOLD
+    else if (osd_mode ==  8) mode_str = "cl ";	// COURSELOCK
+    else if (osd_mode ==  9) mode_str = "vr ";	// VELOCITYROAM
+    else if (osd_mode == 10) mode_str = "hl ";	// HOMELEASH
+    else if (osd_mode == 11) mode_str = "pa ";	// ABSOLUTEPOSITION
+    else if (osd_mode == 12) mode_str = "rtb";	// RETURNTOBASE
+    else if (osd_mode == 13) mode_str = "lan";	// LAND
+    else if (osd_mode == 14) mode_str = "pp ";	// PATHPLANNER
+    else if (osd_mode == 15) mode_str = "poi";	// POI
+    else if (osd_mode == 16) mode_str = "ac ";	// AUTOCRUISE
+    else if (osd_mode == 17) mode_str = "at ";	// AUTOTAKEOFF
+#endif    
     osd.printf("%c%s", 0xE0, mode_str);
     osd.closePanel();
 }
@@ -855,6 +877,27 @@ void panBatteryPercent(int first_col, int first_line) {
 #else
     osd.printf("%c%3.0i%c", 0xB9, osd_battery_remaining_A, 0x25);
 #endif
+    osd.closePanel();
+}
+
+
+/******************************************************************/
+// Panel  : panTxPID
+// Needs  : X, Y locations
+// Output : Current TxPID settings
+/******************************************************************/
+void panTxPID(int first_col, int first_line) {
+    osd.setPanel(first_col, first_line);
+    osd.openPanel();
+    osd.printf("%1.5f", (double)osd_txpid_cur[0]);
+    osd.closePanel();
+    osd.setPanel(first_col, first_line + 1);
+    osd.openPanel();
+    osd.printf("%1.5f", (double)osd_txpid_cur[1]);
+    osd.closePanel();
+    osd.setPanel(first_col, first_line + 2);
+    osd.openPanel();
+    osd.printf("%1.5f", (double)osd_txpid_cur[2]);
     osd.closePanel();
 }
 
@@ -1332,3 +1375,4 @@ void set_converts() {
         unit_length_large = 0xFA;
     }
 }
+

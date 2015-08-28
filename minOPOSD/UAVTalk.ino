@@ -33,10 +33,17 @@
 
 //#define DEBUG
 
-
-static unsigned long last_gcstelemetrystats_send = 0;
 static unsigned long last_flighttelemetry_connect = 0;
 static uint8_t gcstelemetrystatus = TELEMETRYSTATS_STATE_DISCONNECTED;
+
+/* This OSD is not a GCS so we shouldn't participate in a connection protocol
+ * which will update the stats being reported to one. If SEND_GCSTELEMETRYSTATS
+ * is not defined then gcstelemetrystatus will simply reflect if attitudestatus
+ * is being received.
+ */
+#undef SEND_GCSTELEMETRYSTATS
+#ifdef SEND_GCSTELEMETRYSTATS
+static unsigned long last_gcstelemetrystats_send = 0;
 
 #if defined VERSION_RELEASE_12_10_1 || defined VERSION_RELEASE_12_10_2 || defined VERSION_RELEASE_13_06_1 || defined VERSION_RELEASE_13_06_2
 static uint32_t gcstelemetrystats_objid = GCSTELEMETRYSTATS_OBJID;
@@ -49,7 +56,7 @@ static uint8_t gcstelemetrystats_obj_len = GCSTELEMETRYSTATS_OBJ_LEN_001;
 static uint8_t gcstelemetrystats_obj_status = GCSTELEMETRYSTATS_OBJ_STATUS_001;
 static uint8_t flighttelemetrystats_obj_status = FLIGHTTELEMETRYSTATS_OBJ_STATUS_001;
 #endif
-
+#endif /* SEND_GCSTELEMETRYSTATS */
 
 // CRC lookup table
 static const uint8_t crc_table[256] = {
@@ -243,6 +250,7 @@ void uavtalk_request_object(uint8_t id) {
 #endif
 
 
+#ifdef SEND_GCSTELEMETRYSTATS
 void uavtalk_send_gcstelemetrystats(void) {
 	uint8_t *d;
 	uint8_t i;
@@ -264,6 +272,7 @@ void uavtalk_send_gcstelemetrystats(void) {
 	uavtalk_send_msg(&msg);
 	last_gcstelemetrystats_send = millis();
 }
+#endif /* SEND_GCSTELEMETRYSTATS */
 
 
 uint8_t uavtalk_parse_char(uint8_t c, uavtalk_message_t *msg) {
@@ -409,6 +418,7 @@ int uavtalk_read(void) {
 		if (uavtalk_parse_char(c, &msg)) {
 			// consume msg
 			switch (msg.ObjID) {
+#ifdef SEND_GCSTELEMETRYSTATS
 				case FLIGHTTELEMETRYSTATS_OBJID:
 #ifdef VERSION_ADDITIONAL_UAVOBJID
 				case FLIGHTTELEMETRYSTATS_OBJID_001:
@@ -428,9 +438,13 @@ int uavtalk_read(void) {
 						break;
 					}
 				break;
+#endif /* SEND_GCSTELEMETRYSTATS */
 				case ATTITUDEACTUAL_OBJID:
 				case ATTITUDESTATE_OBJID:
 					last_flighttelemetry_connect = millis();
+#ifndef SEND_GCSTELEMETRYSTATS
+					gcstelemetrystatus = TELEMETRYSTATS_STATE_CONNECTED;
+#endif /* SEND_GCSTELEMETRYSTATS */
 					show_prio_info = 1;
         				osd_roll		= (int16_t) uavtalk_get_float(&msg, ATTITUDEACTUAL_OBJ_ROLL);
         				osd_pitch		= (int16_t) uavtalk_get_float(&msg, ATTITUDEACTUAL_OBJ_PITCH);
@@ -447,6 +461,8 @@ int uavtalk_read(void) {
 				case FLIGHTSTATUS_OBJID_003:
 				case FLIGHTSTATUS_OBJID_004:
 				case FLIGHTSTATUS_OBJID_005:
+				case FLIGHTSTATUS_OBJID_006:
+				case FLIGHTSTATUS_OBJID_007:
 #endif
         				osd_armed		= uavtalk_get_int8(&msg, FLIGHTSTATUS_OBJ_ARMED);
         				osd_mode		= uavtalk_get_int8(&msg, FLIGHTSTATUS_OBJ_FLIGHTMODE);
@@ -479,6 +495,7 @@ int uavtalk_read(void) {
 				case GPSPOSITION_OBJID:
 				case GPSPOSITIONSENSOR_OBJID:
 				case GPSPOSITIONSENSOR_OBJID_001:
+				case GPSPOSITIONSENSOR_OBJID_002:
 					osd_lat			= uavtalk_get_int32(&msg, GPSPOSITION_OBJ_LAT) / 10000000.0;
 					osd_lon			= uavtalk_get_int32(&msg, GPSPOSITION_OBJ_LON) / 10000000.0;
 					osd_satellites_visible	= uavtalk_get_int8(&msg, GPSPOSITION_OBJ_SATELLITES);
@@ -522,6 +539,16 @@ int uavtalk_read(void) {
         				oplm_linkquality	= uavtalk_get_int8(&msg, OPLINKSTATUS_OBJ_LINKQUALITY);
 				break;
 #endif
+				case RECEIVERSTATUS_OBJID:
+					osd_receiver_quality	= uavtalk_get_int8(&msg, RECEIVERSTATUS_OBJ_QUALITY);
+				break;
+
+				case TXPIDSTATUS_OBJID:
+					osd_txpid_cur[0]	= uavtalk_get_float(&msg, TXPIDSTATUS_OBJ_CURPID1);
+					osd_txpid_cur[1]	= uavtalk_get_float(&msg, TXPIDSTATUS_OBJ_CURPID2);
+					osd_txpid_cur[2]	= uavtalk_get_float(&msg, TXPIDSTATUS_OBJ_CURPID3);
+				break;
+
 #ifdef OP_DEBUG
 				case SYSTEMALARMS_OBJID:
 #ifdef VERSION_ADDITIONAL_UAVOBJID
@@ -557,10 +584,12 @@ int uavtalk_read(void) {
 		show_prio_info = 1;
 	}
 	
+#ifdef SEND_GCSTELEMETRYSTATS
 	// periodically send gcstelemetrystats
 	if (last_gcstelemetrystats_send + GCSTELEMETRYSTATS_SEND_PERIOD < millis()) {
 		uavtalk_send_gcstelemetrystats();
 	}
+#endif /* SEND_GCSTELEMETRYSTATS */
 
         return show_prio_info;
 }
@@ -572,3 +601,4 @@ int uavtalk_state(void)
 }
 
 #endif // PROTOCOL_UAVTALK
+
